@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 
 import RadioGroup from "react-native-radio-buttons-group";
+import { RadioButton } from "react-native-paper";
 
 import image from "../../assets/bg.jpg";
 
@@ -8,8 +9,19 @@ import imageGold from "../../assets/gold.png";
 import imageSilver from "../../assets/silver.png";
 import imageCopper from "../../assets/copper.png";
 
-import { Container, Background } from "./styles";
+import {
+  Container,
+  Background,
+  RadioContainer,
+  RadioText,
+  Options,
+  Input,
+  Buttons,
+  Button,
+  ButtonText,
+} from "./styles";
 import Value from "./components/Value";
+import { View } from "react-native";
 
 export type Carteira = {
   PO: number;
@@ -34,6 +46,9 @@ const Inventory: React.FC = () => {
   }
 
   function comprar(precoItem: number, moeda: Moeda): void {
+    console.log(precoItem);
+    console.log(moeda);
+
     const valorOperacao = calcularValorOperacao(precoItem, moeda);
 
     alterarSaldo(valorOperacao, "COMPRAR");
@@ -80,8 +95,6 @@ const Inventory: React.FC = () => {
       const bronze = novoSaldo % 10;
 
       setCarteira((state) => ({ ...state, PP: prata, PC: bronze }));
-    } else {
-      console.log("Saldo inválido");
     }
   }
 
@@ -94,23 +107,8 @@ const Inventory: React.FC = () => {
     return saldoCarteira;
   }
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: "1", // acts as primary key, should be unique and non-empty string
-        label: "Option 1",
-        value: "option1",
-      },
-      {
-        id: "2",
-        label: "Option 2",
-        value: "option2",
-      },
-    ],
-    []
-  );
-
-  const [selectedId, setSelectedId] = useState("");
+  const [value, setValue] = useState<Moeda>("cobre");
+  const [amount, setAmount] = useState("");
 
   return (
     <Container>
@@ -119,11 +117,63 @@ const Inventory: React.FC = () => {
         <Value icon={imageSilver} label="Silver" value={carteira.PP} />
         <Value icon={imageCopper} label="Cobre" value={carteira.PC} />
 
-        <RadioGroup
-          radioButtons={radioButtons}
-          onPress={setSelectedId}
-          selectedId={selectedId}
-        />
+        <Options>
+          <View style={{ flexDirection: "row" }}>
+            <Input
+              value={amount}
+              onChangeText={setAmount}
+              keyboardType="number-pad"
+              maxLength={3}
+            />
+            <RadioButton.Group
+              onValueChange={(newValue: any) => setValue(newValue)}
+              value={value}
+            >
+              <RadioContainer>
+                <RadioButton value="ouro" />
+                <RadioText onPress={() => setValue("ouro")}>Ouro</RadioText>
+              </RadioContainer>
+            </RadioButton.Group>
+
+            <RadioButton.Group
+              onValueChange={(newValue: any) => setValue(newValue)}
+              value={value}
+            >
+              <RadioContainer>
+                <RadioButton value="prata" />
+                <RadioText onPress={() => setValue("prata")}>Prata</RadioText>
+              </RadioContainer>
+            </RadioButton.Group>
+            <RadioButton.Group
+              onValueChange={(newValue: any) => setValue(newValue)}
+              value={value}
+            >
+              <RadioContainer>
+                <RadioButton value="cobre" />
+                <RadioText onPress={() => setValue("cobre")}>Cobre</RadioText>
+              </RadioContainer>
+            </RadioButton.Group>
+          </View>
+
+          <Buttons>
+            <Button
+              onPress={() => {
+                depositar(parseInt(amount), value);
+              }}
+              color="green"
+            >
+              <ButtonText>Aumentar</ButtonText>
+            </Button>
+            <Button
+              onPress={() => {
+                comprar(parseInt(amount), value);
+              }}
+              color="red"
+            >
+              <ButtonText>Diminuir</ButtonText>
+            </Button>
+          </Buttons>
+        </Options>
       </Background>
     </Container>
   );
