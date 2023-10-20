@@ -44,6 +44,8 @@ export const Container = styled.View<Container>`
 
 export const ListText = styled.Text`
   color: white;
+
+  text-align: center;
 `;
 
 export const InputContainer = styled.View`

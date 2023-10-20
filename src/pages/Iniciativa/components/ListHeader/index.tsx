@@ -16,6 +16,7 @@ type Props = {
     role: Role
   ) => void;
   entityName: string;
+  randomGenerateEnemy: () => void;
   rolarIniciativa: () => void;
   setInimigos: React.Dispatch<React.SetStateAction<Entity[]>>;
   setJogadores: React.Dispatch<React.SetStateAction<Entity[]>>;
@@ -33,6 +34,7 @@ const ListHeader = ({
   setJogadores,
   contagemJogadores,
   contagemInimigos,
+  randomGenerateEnemy,
 }: Props) => {
   return (
     <>
@@ -47,7 +49,7 @@ const ListHeader = ({
       <ListButton onPress={() => handleAddEntity(setInimigos, "chefe")}>
         <ListButtonText>Adicionar Chefe</ListButtonText>
       </ListButton>
-      <ListButton>
+      <ListButton onPress={randomGenerateEnemy}>
         <ListButtonText>Adicionar Inimigo Aleatório</ListButtonText>
       </ListButton>
       <ListButton onPress={rolarIniciativa}>

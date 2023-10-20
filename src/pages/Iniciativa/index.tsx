@@ -12,6 +12,7 @@ import {
 } from "./styles";
 import ListItem from "./components/ListItem";
 import ListHeader from "./components/ListHeader";
+import { nameData } from "../../utils/names";
 
 export type Role = "jogador" | "inimigo" | "chefe";
 
@@ -71,35 +72,27 @@ const Iniciativa = () => {
     setEntidades(entidadesCopia);
   };
 
-  useEffect(() => {
-    // Gerando inimigos aleatórios e adicionando à lista
+  const randomGenerateEnemy = () => {
+    const destrezaRandom = gerador(Math.floor(Math.random() * 5));
+    const bonusRandom = gerador(Math.floor(Math.random() * 5));
 
-    const numeroInimigos = gerador(8) + 1;
-    const novosJogadoresInimigos = [...jogadores];
+    const { firstName, lastNamePrefix } = nameData;
 
-    for (let i = 1; i <= numeroInimigos; i++) {
-      const destrezaRandom = gerador(5);
-      const bonusRandom = gerador(3);
-      novosJogadoresInimigos.push({
-        id: uuid.v4(),
-        name: `Inimigo ${i}`,
-        destreza: destrezaRandom,
-        bonus: bonusRandom,
-        iniciativa: criarIniciativa(destrezaRandom, bonusRandom),
-        role: "inimigo",
-      });
-    }
+    const firstNameId = Math.floor(Math.random() * firstName.length);
+    const lastNamePrefixId = Math.floor(Math.random() * lastNamePrefix.length);
 
-    // Ordenando a lista de jogadores por iniciativa e nome
-    novosJogadoresInimigos.sort((a, b) => {
-      if (a.iniciativa === b.iniciativa) {
-        return a.name.localeCompare(b.name);
-      }
-      return b.iniciativa - a.iniciativa;
-    });
+    const newEnemy: Entity = {
+      id: uuid.v4(),
+      name: `${firstName[firstNameId]} ${lastNamePrefix[lastNamePrefixId]}`,
+      destreza: destrezaRandom,
+      bonus: bonusRandom,
+      iniciativa: 0,
+      role: "inimigo",
+    };
 
-    // setJogadoresIniciativa(novosJogadoresInimigos);
-  }, []);
+    setInimigos((oldState) => [...oldState, newEnemy]);
+    setEntidades((oldState) => [...oldState, newEnemy]);
+  };
 
   return (
     <Container>
@@ -112,6 +105,7 @@ const Iniciativa = () => {
         setJogadores={setJogadores}
         contagemJogadores={jogadores.length}
         contagemInimigos={inimigos.length}
+        randomGenerateEnemy={randomGenerateEnemy}
       />
       <List
         data={entidades}

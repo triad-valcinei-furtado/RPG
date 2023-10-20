@@ -44,6 +44,7 @@ const ListItem = ({
       <InputContainer>
         <Label>{label}</Label>
         <Input
+          editable={false}
           value={value}
           totalWidth={90}
           textColor="#fff"
