@@ -14,7 +14,7 @@ const ListItem = ({ data }: { data: Entity }) => {
 
   return (
     <Container>
-      <ListText>{data.jogador}</ListText>
+      <ListText>{data.name}</ListText>
       <Box label="Destreza" value={data.modificadorDestreza} />
       <Box label="Bonus" value={data.bonus} />
     </Container>

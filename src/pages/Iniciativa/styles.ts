@@ -29,10 +29,6 @@ export const ListButtonText = styled.Text`
 
 export const Quantidade = styled.Text`
   color: white;
-
-  margin-left: auto;
-
-  margin-right: 5px;
 `;
 
 export const EnemyInput = styled.TextInput`
@@ -43,4 +39,11 @@ export const EnemyInput = styled.TextInput`
   height: 40px;
 
   margin: 10px 0;
+`;
+
+export const Quantidades = styled.View`
+  width: 100%;
+
+  flex-direction: row;
+  justify-content: space-between;
 `;
