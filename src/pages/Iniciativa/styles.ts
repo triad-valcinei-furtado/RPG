@@ -49,3 +49,7 @@ export const Quantidades = styled.View`
 
   margin-bottom: 10px;
 `;
+
+export const Input = styled.TextInput`
+  background-color: #fff;
+`;

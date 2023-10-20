@@ -1,29 +1,25 @@
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
-import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-import Inventory from "./src/pages/Inventory";
-import Iniciativa from "./src/pages/Iniciativa";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const Tab = createMaterialTopTabNavigator();
+import Login from "./src/pages/Login";
+import Home from "./src/pages/Home";
+import UserContextProvider from "./src/contexts/userContext";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <>
+    <UserContextProvider>
       <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={{
-            tabBarStyle: { backgroundColor: "#1b1b1b", paddingTop: 20 },
-            tabBarLabelStyle: { color: "#fff" },
-            tabBarIndicatorStyle: { backgroundColor: "#fff" },
-          }}
-        >
-          <Tab.Screen name="Carteira" component={Inventory} />
-          <Tab.Screen name="Batalha" component={Iniciativa} />
-        </Tab.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" component={Home} />
+        </Stack.Navigator>
       </NavigationContainer>
+
       <ExpoStatusBar style="light" />
-    </>
+    </UserContextProvider>
   );
 }

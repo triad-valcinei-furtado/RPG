@@ -4,6 +4,7 @@ import uuid from "react-native-uuid";
 import {
   Container,
   EnemyInput,
+  Input,
   List,
   ListButton,
   ListButtonText,
@@ -13,6 +14,7 @@ import {
 import ListItem from "./components/ListItem";
 import ListHeader from "./components/ListHeader";
 import { nameData } from "../../utils/names";
+import { Button } from "react-native-paper";
 
 export type Role = "jogador" | "inimigo" | "chefe";
 
@@ -32,6 +34,7 @@ const criarIniciativa = (modificadorDestreza: number, bonus: number) => {
 };
 
 const Iniciativa = () => {
+  const room = null;
   const [jogadores, setJogadores] = useState<Entity[]>([]);
   const [inimigos, setInimigos] = useState<Entity[]>([]);
   const [entidades, setEntidades] = useState<Entity[]>([]);
@@ -96,24 +99,33 @@ const Iniciativa = () => {
 
   return (
     <Container>
-      <ListHeader
-        entityName={entityName}
-        rolarIniciativa={rolarIniciativa}
-        setInimigos={setInimigos}
-        setEntityName={setEntityName}
-        handleAddEntity={handleAddEntity}
-        setJogadores={setJogadores}
-        contagemJogadores={jogadores.length}
-        contagemInimigos={inimigos.length}
-        randomGenerateEnemy={randomGenerateEnemy}
-      />
-      <List
-        data={entidades}
-        renderItem={({ item }) => (
-          //@ts-ignore
-          <ListItem data={item} setEntidades={setEntidades} />
-        )}
-      />
+      {room ? (
+        <>
+          <ListHeader
+            entityName={entityName}
+            rolarIniciativa={rolarIniciativa}
+            setInimigos={setInimigos}
+            setEntityName={setEntityName}
+            handleAddEntity={handleAddEntity}
+            setJogadores={setJogadores}
+            contagemJogadores={jogadores.length}
+            contagemInimigos={inimigos.length}
+            randomGenerateEnemy={randomGenerateEnemy}
+          />
+          <List
+            data={entidades}
+            renderItem={({ item }) => (
+              //@ts-ignore
+              <ListItem data={item} setEntidades={setEntidades} />
+            )}
+          />
+        </>
+      ) : (
+        <>
+          <Input />
+          <Button>Criar Sala</Button>
+        </>
+      )}
     </Container>
   );
 };
