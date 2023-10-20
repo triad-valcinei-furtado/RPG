@@ -46,4 +46,6 @@ export const Quantidades = styled.View`
 
   flex-direction: row;
   justify-content: space-between;
+
+  margin-bottom: 10px;
 `;

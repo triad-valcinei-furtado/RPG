@@ -1,22 +1,73 @@
 import React from "react";
-import { Input, InputContainer, Label, ListText, Container } from "./styles";
+import {
+  Input,
+  InputContainer,
+  Label,
+  ListText,
+  Container,
+  BoxContainer,
+} from "./styles";
 import { Entity } from "../..";
 
-const ListItem = ({ data }: { data: Entity }) => {
-  const Box = ({ label, value }: { label: string; value: number }) => {
+const ListItem = ({
+  data,
+  setEntidades,
+}: {
+  data: Entity;
+  setEntidades: React.Dispatch<React.SetStateAction<Entity[]>>;
+}) => {
+  const handleChangeModificador = (
+    txt: number,
+    modificador: "destreza" | "bonus"
+  ) => {
+    let number = txt;
+
+    setEntidades((oldState) => {
+      if (!number) {
+        number = 0;
+      }
+
+      const newState = oldState.map((item) => {
+        if (item.id === data.id) {
+          item[modificador] = number;
+        }
+
+        return item;
+      });
+
+      return newState;
+    });
+  };
+
+  const Box = ({ label, value }: { label: any; value: number }) => {
     return (
       <InputContainer>
         <Label>{label}</Label>
-        <Input value={String(value)} />
+        <Input
+          value={value}
+          totalWidth={90}
+          textColor="#fff"
+          rounded
+          onChange={(txt) =>
+            handleChangeModificador(txt, label.toLocaleLowerCase())
+          }
+        />
       </InputContainer>
     );
   };
 
   return (
-    <Container>
-      <ListText>{data.name}</ListText>
-      <Box label="Destreza" value={data.modificadorDestreza} />
-      <Box label="Bonus" value={data.bonus} />
+    <Container role={data.role}>
+      <BoxContainer flex={1}>
+        <ListText>{data.iniciativa}</ListText>
+        <ListText>{data.name}</ListText>
+      </BoxContainer>
+
+      <BoxContainer flex={3}>
+        <Box label="Destreza" value={data.destreza} />
+        <Box label="Bonus" value={data.bonus} />
+      </BoxContainer>
+      <BoxContainer flex={1}></BoxContainer>
     </Container>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import { ScrollView } from "react-native";
+import uuid from "react-native-uuid";
 import {
   Container,
   EnemyInput,
@@ -10,12 +11,17 @@ import {
   Quantidades,
 } from "./styles";
 import ListItem from "./components/ListItem";
+import ListHeader from "./components/ListHeader";
+
+export type Role = "jogador" | "inimigo" | "chefe";
 
 export type Entity = {
+  id: string | number[];
   name: string;
-  modificadorDestreza: number;
+  destreza: number;
   bonus: number;
   iniciativa: number;
+  role: Role;
 };
 
 const gerador = (value: number) => Math.floor(Math.random() * value);
@@ -23,27 +29,6 @@ const gerador = (value: number) => Math.floor(Math.random() * value);
 const criarIniciativa = (modificadorDestreza: number, bonus: number) => {
   return gerador(20) + 1 + modificadorDestreza + bonus;
 };
-
-const joga = [
-  {
-    name: "Guilherme",
-    modificadorDestreza: 3,
-    bonus: 2,
-    iniciativa: criarIniciativa(3, 2),
-  },
-  {
-    name: "Pedrinho",
-    modificadorDestreza: 4,
-    bonus: 1,
-    iniciativa: criarIniciativa(4, 1),
-  },
-  {
-    name: "Vafucaju",
-    modificadorDestreza: 2,
-    bonus: 2,
-    iniciativa: criarIniciativa(2, 2),
-  },
-];
 
 const Iniciativa = () => {
   const [jogadores, setJogadores] = useState<Entity[]>([]);
@@ -53,22 +38,28 @@ const Iniciativa = () => {
   const [entityName, setEntityName] = useState("");
 
   const handleAddEntity = (
-    list: React.Dispatch<React.SetStateAction<Entity[]>>
+    list: React.Dispatch<React.SetStateAction<Entity[]>>,
+    role: Role
   ) => {
     const entity = {
+      id: uuid.v4(),
       name: entityName,
-      modificadorDestreza: 0,
+      destreza: 0,
       bonus: 0,
       iniciativa: 0,
+      role,
     };
 
-    list((oldState) => ({ ...oldState, entity }));
-    setEntidades((oldState) => ({ ...oldState, entity }));
+    list((oldState) => [...oldState, entity]);
+    setEntidades((oldState) => [...oldState, entity]);
     setEntityName("");
   };
 
   const rolarIniciativa = () => {
-    const entidadesCopia = [...entidades];
+    const entidadesCopia = entidades.map((item) => {
+      item.iniciativa = criarIniciativa(item.destreza, item.bonus);
+      return item;
+    });
 
     entidadesCopia.sort((a, b) => {
       if (a.iniciativa === b.iniciativa) {
@@ -90,10 +81,12 @@ const Iniciativa = () => {
       const destrezaRandom = gerador(5);
       const bonusRandom = gerador(3);
       novosJogadoresInimigos.push({
+        id: uuid.v4(),
         name: `Inimigo ${i}`,
-        modificadorDestreza: destrezaRandom,
+        destreza: destrezaRandom,
         bonus: bonusRandom,
         iniciativa: criarIniciativa(destrezaRandom, bonusRandom),
+        role: "inimigo",
       });
     }
 
@@ -108,37 +101,24 @@ const Iniciativa = () => {
     // setJogadoresIniciativa(novosJogadoresInimigos);
   }, []);
 
-  const ListHeader = () => {
-    return (
-      <>
-        <EnemyInput value={entityName} onChangeText={setEntityName} />
-        <ListButton onPress={() => handleAddEntity(setJogadores)}>
-          <ListButtonText>Adicionar Jogador</ListButtonText>
-        </ListButton>
-        <ListButton onPress={() => handleAddEntity(setInimigos)}>
-          <ListButtonText>Adicionar Inimigo</ListButtonText>
-        </ListButton>
-        <ListButton>
-          <ListButtonText>Adicionar Inimigo Aleatório</ListButtonText>
-        </ListButton>
-        <ListButton onPress={rolarIniciativa}>
-          <ListButtonText>Rolar Iniciativa</ListButtonText>
-        </ListButton>
-        <Quantidades>
-          <Quantidade>Jogadores: 0</Quantidade>
-          <Quantidade>Inimigos: 0</Quantidade>
-        </Quantidades>
-      </>
-    );
-  };
-
   return (
     <Container>
+      <ListHeader
+        entityName={entityName}
+        rolarIniciativa={rolarIniciativa}
+        setInimigos={setInimigos}
+        setEntityName={setEntityName}
+        handleAddEntity={handleAddEntity}
+        setJogadores={setJogadores}
+        contagemJogadores={jogadores.length}
+        contagemInimigos={inimigos.length}
+      />
       <List
-        ListHeaderComponent={ListHeader}
         data={entidades}
-        //@ts-ignore
-        renderItem={({ item }) => <ListItem data={item} />}
+        renderItem={({ item }) => (
+          //@ts-ignore
+          <ListItem data={item} setEntidades={setEntidades} />
+        )}
       />
     </Container>
   );
